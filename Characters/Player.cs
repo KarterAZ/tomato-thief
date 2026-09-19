@@ -1,59 +1,169 @@
 using Godot;
 using System;
 
-public partial class Player : Area2D
+public partial class Player : CharacterBody2D
 {
-	[Export]
-	public int Speed { get; set; } = 400; // How fast the player will move (pixels/sec).
+	[Export] public float maxJumpHeight = 72f;
+	[Export] public float timeToPeak = 0.4f;
+	[Export] public float timeToFall = 0.35f;
+	[Export] public float runSpeed = 250;
+	[Export] public float dashSpeed = 400;
+	[Export] public float dashDuration = 0.2f;
+	[Export] public float dashCooldown = 0.35f;
 
-	public Vector2 ScreenSize; // Size of the game window.
+	private float jumpVelocity;
+	private float jumpGravity;
+	private float fallGravity;
+	private float dashTime = 0.0f;
+	private float dashCDTimer = 0.0f;
+	private int wasOnFloor = 0;
+	private bool isDashing = false;
+	private bool dashOnCD = false;
+	
+	private AnimatedSprite2D animatedSprite2D;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		ScreenSize = GetViewportRect().Size;
+		animatedSprite2D = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		animatedSprite2D.Play();
+
+		float v0Y = 2 * maxJumpHeight / timeToPeak;
+		float gAsc = 2 * maxJumpHeight / (timeToPeak * timeToPeak);
+		float gDes = 2 * maxJumpHeight / (timeToFall * timeToFall);
+
+		// We adjust the directions for Godot's system, which uses positive Y values pointing down
+		jumpVelocity = -v0Y; // up (-Y)
+		jumpGravity = gAsc; // down (+Y)
+		fallGravity = gDes; // down (+Y)
+	}
+
+	private void GetInput(float delta)
+	{
+		var velocity = Velocity;
+
+		var right = Input.IsActionPressed("move_right");
+		var left = Input.IsActionPressed("move_left");
+		var jump = Input.IsActionPressed("jump");
+		var dash = Input.IsActionPressed("dash");
+
+		if(isDashing)
+		{
+			dashTime -= delta;
+			if(dashTime < 0f)
+			{
+				isDashing = false;
+				dashOnCD = true;
+				dashCDTimer = dashCooldown;
+			}
+		}
+		else if(!isDashing && !dashOnCD && dash)
+		{
+			isDashing = true;
+			dashTime = dashDuration;
+			velocity.Y = 0f;
+			if (right)
+			{
+				velocity.X += dashSpeed;
+				animatedSprite2D.FlipH = false;
+			}
+			else if (left)
+			{
+				velocity.X -= dashSpeed;
+				animatedSprite2D.FlipH = true;
+			}
+			else
+			{
+				velocity.X = animatedSprite2D.FlipH ? dashSpeed : -dashSpeed;
+			}
+		}
+		else if(!isDashing)
+		{
+			velocity.X = 0;
+
+			float gravity = velocity.Y < 0f ? jumpGravity : fallGravity;
+
+			if(dashOnCD)
+			{
+				dashCDTimer -= delta;
+				if(dashCDTimer < 0)
+				{
+					dashOnCD = !IsOnFloor();
+				}
+			}
+
+			//no grav when grounded
+			if(!IsOnFloor())
+			{
+				velocity.Y += gravity * delta;
+			}
+			else
+			{
+				velocity.Y = 0f;
+			}
+			//do the movements
+			if ((IsOnFloor() || wasOnFloor > 0) && jump)
+			{
+				velocity.Y = jumpVelocity;
+			}
+			if (right)
+			{
+				velocity.X += runSpeed;
+				animatedSprite2D.FlipH = false;
+			}
+			else if (left)
+			{
+				velocity.X -= runSpeed;
+				animatedSprite2D.FlipH = true;
+			}
+		}
+
+		Velocity = velocity;
+	}
+
+	private void SetAnimation()
+	{
+		var velocity = Velocity;
+
+		if(isDashing)
+		{
+			animatedSprite2D.Animation = "dash";
+		}
+		else
+		{
+			if (velocity.Length() > 0)
+			{
+				if(velocity.X != 0 && IsOnFloor())
+				{
+					animatedSprite2D.Animation = "run";
+				}
+				if(velocity.Y != 0 && !IsOnFloor())
+				{
+					animatedSprite2D.Animation = "jump";
+				}
+			}
+			else
+			{
+				animatedSprite2D.Animation = "idle";
+			}
+		}
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		 var velocity = Vector2.Zero; // The player's movement vector.
-
-		if (Input.IsActionPressed("move_right"))
+		//extra jump frames
+		if(IsOnFloor())
 		{
-			velocity.X += 1;
+			wasOnFloor = 4;
+		}
+		else if(wasOnFloor > 0)
+		{
+			wasOnFloor--;
 		}
 
-		if (Input.IsActionPressed("move_left"))
-		{
-			velocity.X -= 1;
-		}
-
-		if (Input.IsActionPressed("move_down"))
-		{
-			velocity.Y += 1;
-		}
-
-		if (Input.IsActionPressed("move_up"))
-		{
-			velocity.Y -= 1;
-		}
-
-		var animatedSprite2D = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-
-		if (velocity.Length() > 0)
-		{
-			velocity = velocity.Normalized() * Speed;
-			animatedSprite2D.Play();
-		}
-		else
-		{
-			animatedSprite2D.Stop();
-		}
-		
-		Position += velocity * (float)delta;
-		Position = new Vector2(
-		x: Mathf.Clamp(Position.X, 0, ScreenSize.X),
-		y: Mathf.Clamp(Position.Y, 0, ScreenSize.Y)
+		GetInput((float)delta);
+		SetAnimation();
+		MoveAndSlide();
 	}
 }

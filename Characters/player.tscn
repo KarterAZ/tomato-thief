@@ -5,11 +5,25 @@
 [ext_resource type="Texture2D" uid="uid://c47ugqqp24c1y" path="res://Characters/idle_1.png" id="2_p728j"]
 [ext_resource type="Texture2D" uid="uid://yrycmofkgvxw" path="res://Characters/temp_2.png" id="2_vb825"]
 [ext_resource type="Texture2D" uid="uid://dymikj1dibc2o" path="res://Characters/idle_2.png" id="3_5slg2"]
+[ext_resource type="Texture2D" uid="uid://0hw8jyp88hhy" path="res://Characters/stance.png" id="4_5slg2"]
 [ext_resource type="Texture2D" uid="uid://drmnr8aiq6khh" path="res://Characters/look_down.png" id="4_cbmiu"]
 [ext_resource type="Texture2D" uid="uid://qoxsla3cwgyi" path="res://Characters/look_up.png" id="5_w3rah"]
+[ext_resource type="Texture2D" uid="uid://s0sjr7npacli" path="res://Characters/run.png" id="7_cbmiu"]
+[ext_resource type="Texture2D" uid="uid://5v5o7fbrr0yo" path="res://Characters/run_2.png" id="8_w3rah"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_tpijn"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_eovys")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_vb825")
+}],
+"loop": 1,
+"name": &"dash",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("2_p728j")
@@ -19,6 +33,14 @@ animations = [{
 }],
 "loop": 1,
 "name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_5slg2")
+}],
+"loop": 1,
+"name": &"jump",
 "speed": 5.0
 }, {
 "frames": [{
@@ -39,10 +61,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_eovys")
+"texture": ExtResource("7_cbmiu")
 }, {
 "duration": 1.0,
-"texture": ExtResource("2_vb825")
+"texture": ExtResource("8_w3rah")
 }],
 "loop": 1,
 "name": &"run",
@@ -51,14 +73,14 @@ animations = [{
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_optne"]
 
-[node name="Player" type="Area2D" unique_id=746424709]
+[node name="Player" type="CharacterBody2D" unique_id=1248525546]
 script = ExtResource("1_vb825")
 metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=973325649]
 scale = Vector2(0.05, 0.05)
 sprite_frames = SubResource("SpriteFrames_tpijn")
-animation = &"look_down"
+animation = &"dash"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=542156080]
 shape = SubResource("CapsuleShape2D_optne")
