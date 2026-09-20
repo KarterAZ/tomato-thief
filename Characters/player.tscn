@@ -1,24 +1,30 @@
 [gd_scene format=3 uid="uid://yrb55nmggr3a"]
 
-[ext_resource type="Texture2D" uid="uid://c1x4mqqcg64ce" path="res://Characters/temp.png" id="1_eovys"]
 [ext_resource type="Script" uid="uid://dhrak8scogjet" path="res://Characters/Player.cs" id="1_vb825"]
-[ext_resource type="Texture2D" uid="uid://c47ugqqp24c1y" path="res://Characters/idle_1.png" id="2_p728j"]
-[ext_resource type="Texture2D" uid="uid://yrycmofkgvxw" path="res://Characters/temp_2.png" id="2_vb825"]
-[ext_resource type="Texture2D" uid="uid://dymikj1dibc2o" path="res://Characters/idle_2.png" id="3_5slg2"]
-[ext_resource type="Texture2D" uid="uid://0hw8jyp88hhy" path="res://Characters/stance.png" id="4_5slg2"]
+[ext_resource type="Texture2D" uid="uid://btnh7ehdf4l3u" path="res://Characters/Sprite assets/Vampire/Dash1.png" id="2_q6x5r"]
+[ext_resource type="Texture2D" uid="uid://bgloyk8bgqia2" path="res://Characters/Sprite assets/Vampire/Dash2.png" id="3_22qw1"]
 [ext_resource type="Texture2D" uid="uid://drmnr8aiq6khh" path="res://Characters/look_down.png" id="4_cbmiu"]
+[ext_resource type="Texture2D" uid="uid://c7ygahb0i44hd" path="res://Characters/Sprite assets/Vampire/Dash3.png" id="4_mevwr"]
+[ext_resource type="Texture2D" uid="uid://c0s48wpt4il6v" path="res://Characters/Sprite assets/Vampire/Falling.png" id="5_iga2k"]
 [ext_resource type="Texture2D" uid="uid://qoxsla3cwgyi" path="res://Characters/look_up.png" id="5_w3rah"]
-[ext_resource type="Texture2D" uid="uid://s0sjr7npacli" path="res://Characters/run.png" id="7_cbmiu"]
-[ext_resource type="Texture2D" uid="uid://5v5o7fbrr0yo" path="res://Characters/run_2.png" id="8_w3rah"]
+[ext_resource type="Texture2D" uid="uid://bbf7gp5w6a0nh" path="res://Characters/Sprite assets/Vampire/Standing.png" id="6_y0e2x"]
+[ext_resource type="Texture2D" uid="uid://dcu6wmofu6r8v" path="res://Characters/Sprite assets/Vampire/Jumping.png" id="7_8an5f"]
+[ext_resource type="Texture2D" uid="uid://d2tthlb8wwvwf" path="res://Characters/Sprite assets/Vampire/Walking1.png" id="10_0qaj4"]
+[ext_resource type="Texture2D" uid="uid://d15g5kcwjvfmg" path="res://Characters/Sprite assets/Vampire/Walking2.png" id="11_h3pa0"]
+[ext_resource type="Texture2D" uid="uid://diuy1gwfngaoe" path="res://Characters/Sprite assets/Vampire/Walking3.png" id="12_ibds6"]
+[ext_resource type="Texture2D" uid="uid://b7mp8duckk41g" path="res://Characters/Sprite assets/Vampire/Walking4.png" id="13_aw3oq"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_tpijn"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_eovys")
+"texture": ExtResource("2_q6x5r")
 }, {
 "duration": 1.0,
-"texture": ExtResource("2_vb825")
+"texture": ExtResource("3_22qw1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_mevwr")
 }],
 "loop": 1,
 "name": &"dash",
@@ -26,10 +32,15 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_p728j")
+"texture": ExtResource("5_iga2k")
+}],
+"loop": 1,
+"name": &"fall",
+"speed": 5.0
 }, {
+"frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_5slg2")
+"texture": ExtResource("6_y0e2x")
 }],
 "loop": 1,
 "name": &"idle",
@@ -37,7 +48,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("4_5slg2")
+"texture": ExtResource("7_8an5f")
 }],
 "loop": 1,
 "name": &"jump",
@@ -61,10 +72,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("7_cbmiu")
+"texture": ExtResource("10_0qaj4")
 }, {
 "duration": 1.0,
-"texture": ExtResource("8_w3rah")
+"texture": ExtResource("11_h3pa0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_ibds6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_aw3oq")
 }],
 "loop": 1,
 "name": &"run",
@@ -80,7 +97,7 @@ metadata/_edit_group_ = true
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=973325649]
 scale = Vector2(0.05, 0.05)
 sprite_frames = SubResource("SpriteFrames_tpijn")
-animation = &"dash"
+animation = &"fall"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=542156080]
 shape = SubResource("CapsuleShape2D_optne")
